@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Development files
+node_modules
+*.md
+!README.md
+.vscode
+.editorconfig
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Test files and examples
+test
+__tests__
+*test*
+*example*
+imagen_comprimida.webp
+
+# fly.io specific
+.fly
+fly.toml
+
+# Environment files
+.env*
