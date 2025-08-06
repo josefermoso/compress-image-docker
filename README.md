@@ -5,40 +5,56 @@ API de compresión de imágenes usando Sharp, optimizada para despliegue en fly.
 ## Características
 
 - ✅ Compresión real PNG/JPEG → WebP grayscale
-- ✅ Optimización iterativa de calidad para alcanzar ≤300KB
+- ✅ Optimización iterativa de calidad para alcanzar ≤100KB (TARGET_SIZE configurable)
 - ✅ Resize automático si es necesario
+- ✅ OCR Enhancement con compresión inteligente
 - ✅ Headers detallados con métricas de compresión
 - ✅ Estadísticas de uso del servicio
 - ✅ Listo para despliegue en fly.io
 
 ## Uso Local
 
-### Construir la imagen Docker
+### Construir y ejecutar el contenedor
 
 ```bash
-docker build -t compress-image:latest .
+# Limpiar contenedores existentes
+docker stop compress-test 2>/dev/null || true && docker rm compress-test 2>/dev/null || true
+
+# Construir y ejecutar
+docker build -t compress-image:latest . && docker run -d -p 8080:8080 --name compress-test compress-image:latest
+
+# Verificar que está funcionando
+curl http://localhost:8080/
 ```
 
-### Ejecutar el contenedor
+### Desarrollo sin Docker
 
 ```bash
-docker run -p 8080:8080 compress-image:latest
+npm install
+node server.js
 ```
 
 El servidor estará disponible en http://localhost:8080
 
 ## Endpoints
 
-- `GET /` - Health check y documentación
-- `POST /` - Comprimir imagen (enviar datos binarios directamente)
-- `GET /stats` - Estadísticas del servicio
+- `GET /` - Health check y documentación de la API
+- `POST /` - Comprimir imagen básica (WebP grayscale, ≤100KB)
+- `POST /upload-enhance` - Optimización para OCR (PNG optimizado para texto, ≤100KB)
+- `GET /stats` - Estadísticas detalladas del servicio
 
-## Ejemplo de uso
+## Ejemplos de uso
 
-### Usando curl
+### Compresión básica
 
 ```bash
-curl -X POST -H "Content-Type: image/png" --data-binary @ruta/a/imagen.png http://localhost:8080/ -o imagen_comprimida.webp
+curl -X POST -H "Content-Type: image/png" --data-binary @imagen.png http://localhost:8080/ -o comprimida.webp
+```
+
+### Optimización para OCR
+
+```bash
+curl -X POST -H "Content-Type: image/jpeg" --data-binary @flyer.jpg http://localhost:8080/upload-enhance -o optimizada_ocr.png
 ```
 
 ### Respuesta
